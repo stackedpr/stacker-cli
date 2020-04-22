@@ -9,19 +9,22 @@ async function getBranchName() {
 }
 
 async function createBranchBasedOn(base) {
-  const match = base.match(/(.*)-(\d+)/);
+  const match = base.match(/(.*)\-(\d+)/);
   let name;
   let number;
+  log(match);
   if (match) {
-    const [, featureBranch, number] = match;
-    const newBranchNumber = parseInt(number, 10) + 1;
+    const [, featureBranch, index] = match;
+    log(`featureBranch`, featureBranch);
+    log(`index`, index);
+    const newBranchNumber = parseInt(index, 10) + 1;
     name = featureBranch;
     number = newBranchNumber;
   } else {
     name = base;
     number = 1;
   }
-  const branch = `${base}-${number}`;
+  const branch = `${name}-${number}`;
 
   log(`creating branch ${branch}`);
   const { stdout } = await run(`git checkout -b ${branch} ${base}`);
@@ -44,12 +47,16 @@ async function pushOrigin(branchName) {
 }
 
 // TODO: use -b for base
-async function openPR(featureName, title, part) {
+async function openPR(featureName, title, part, base) {
   log(`opening PR`);
   const prTitle = `[${featureName.toUpperCase()}${
     part ? ` - Part_${part}` : ''
   }] - ${title}`;
-  const { stdout } = await run(`hub pull-request -m "${prTitle}"`);
+  let command = `hub pull-request -m "${prTitle}"`;
+  if (base) {
+    command += ` -b ${base}`;
+  }
+  const { stdout } = await run(command);
   log(`output:${stdout}`);
   return stdout;
 }
