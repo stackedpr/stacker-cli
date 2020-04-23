@@ -46,7 +46,30 @@ async function pushOrigin(branchName) {
   return stdout;
 }
 
-// TODO: use -b for base
+async function checkBranchExistence(branch) {
+  try {
+    log(`checking branch existence:${branch}`);
+    await run(`git rev-parse --verify --quiet ${branch}`);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function checkoutPart(branch, part) {
+  const match = branch.match(/(.*)\-(\d+)/);
+  const base = match ? match[1] : branch;
+  const partBranch = part === 'head' ? base : `${base}-${part}`;
+  const doesBranchExist = await checkBranchExistence(partBranch);
+  if (doesBranchExist) {
+    const { stdout } = await run(`git checkout ${partBranch}`);
+    return stdout;
+  } else {
+    log(`branch does not exist`);
+    throw new Error('NO_BRANCH');
+  }
+}
+
 async function openPR(featureName, title, part, base) {
   log(`opening PR`);
   const prTitle = `[${featureName.toUpperCase()}${
@@ -67,4 +90,6 @@ module.exports = {
   openPR,
   initialCommit,
   createBranchBasedOn,
+  checkoutPart,
+  checkBranchExistence,
 };
