@@ -8,16 +8,16 @@ async function go(part) {
     console.log(`Switched to: ${partBranchName}`);
   } catch (e) {
     if (e.message === 'NO_BRANCH') {
-      if (part === 'head') {
-        console.log(`Stack Head does not exist`);
+      if (part === 'main') {
+        console.log(`Feature Stack does not exist`);
       } else {
-        console.log(`Stack Instance ${part} does not exist`);
+        console.log(`Stack Item ${part} does not exist`);
       }
     } else {
-      if (part === 'head') {
-        console.log(`Failed to go to Stack Head`);
+      if (part === 'main') {
+        console.log(`Failed to go to Feature Stack`);
       } else {
-        console.log(`Failed to go to Stack Instance ${part}`);
+        console.log(`Failed to go to Stack Item ${part}`);
       }
     }
   }

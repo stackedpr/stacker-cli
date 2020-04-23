@@ -17,11 +17,11 @@ async function next() {
     {
       type: 'text',
       name: 'subFeatureTitle',
-      message: `What is the title of this Stack Instance?`,
-      initial: 'Stack Instance Title',
+      message: `What is the title of this Stack Item?`,
+      initial: 'Stack Item Title',
     },
   ]);
-  console.log(`Creating Feature Stack Instance...`);
+  console.log(`Creating Feature Stack Item...`);
 
   const { number } = await createBranchBasedOn(baseBranchName);
   const branchName = await getBranchName();

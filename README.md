@@ -1,2 +1,1 @@
-- stacker list: lists head and instances
-- stacker go: jumps to part (go 1/go head)
+- stacker list: lists main and items

@@ -32,7 +32,7 @@ async function start() {
   await pushOrigin(branchName);
   const prLink = await openPR(featureName, title);
   console.log(`Created Stack PR: ${prLink}`);
-  console.log(`Run \`npx stacker --next\` to create a Stack Instance`);
+  console.log(`Run \`npx stacker --next\` to create a Stack Item`);
 }
 
 module.exports = { start };

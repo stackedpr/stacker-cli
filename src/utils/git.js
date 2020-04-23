@@ -59,7 +59,7 @@ async function checkBranchExistence(branch) {
 async function checkoutPart(branch, part) {
   const match = branch.match(/(.*)\-(\d+)/);
   const base = match ? match[1] : branch;
-  const partBranch = part === 'head' ? base : `${base}-${part}`;
+  const partBranch = part === 'main' ? base : `${base}-${part}`;
   const doesBranchExist = await checkBranchExistence(partBranch);
   if (doesBranchExist) {
     const { stdout } = await run(`git checkout ${partBranch}`);
