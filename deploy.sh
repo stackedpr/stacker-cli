@@ -8,6 +8,10 @@ cp builds/stacker-macos ../homebrew-stacker/stacker
 rm -rf builds
 cd ../homebrew-stacker
 tar -czvf stacker-v$VERSION.tar.gz stacker
+rm stacker
 SHA=`shasum -a 256 stacker-v$VERSION.tar.gz`
-echo $SHA
-echo "deploying!"
+now
+rm stacker-v$VERSION.tar.gz
+echo "Replace Values in Formula:"
+echo " Sha $SHA"
+echo " Filename stacker-v$VERSION.tar.gz"
