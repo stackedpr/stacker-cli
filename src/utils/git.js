@@ -8,6 +8,20 @@ async function getBranchName() {
   return stdout;
 }
 
+async function getFeatureByBranch(branch) {
+  const regex = /\#\d+\s+\[(.*?)(?: - Part_\d+)?\].*/;
+  log(`getting feature by branch name`);
+  const { stdout } = await run(`hub pr list -b ${branch}`);
+  log(`output:${stdout}`);
+  const match = stdout.match(regex);
+  if (match) {
+    log(`feature name is: ${match[1]}`);
+    return match[1];
+  }
+  log(`couldnt find feature name by branch`);
+  return '';
+}
+
 async function createBranchBasedOn(base) {
   const match = base.match(/(.*)\-(\d+)/);
   let name;
@@ -32,9 +46,9 @@ async function createBranchBasedOn(base) {
   return { branch, name, number };
 }
 
-async function initialCommit() {
+async function initialCommit(msg) {
   log(`creating initial commit`);
-  const { stdout } = await run(`git commit --allow-empty -m "Start Feature"`);
+  const { stdout } = await run(`git commit --allow-empty -m "${msg}"`);
   log(`output:${stdout}`);
   return stdout;
 }
@@ -92,4 +106,5 @@ module.exports = {
   createBranchBasedOn,
   checkoutPart,
   checkBranchExistence,
+  getFeatureByBranch,
 };

@@ -6,6 +6,12 @@
   "bin": {
     "stacker": "./bin/index.js"
   },
+  "scripts": {
+    "build": "pkg --out-path builds package.json"
+  },
+  "devDependencies": {
+    "pkg": "^4.4.7"
+  },
   "dependencies": {
     "@octokit/rest": "^17.5.1",
     "arg": "^4.1.3",

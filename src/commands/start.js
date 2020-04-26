@@ -5,7 +5,7 @@ const {
   openPR,
   initialCommit,
 } = require('../utils/git');
-const { setFeatureForBranch } = require('../utils/cache');
+// const { setFeatureForBranch } = require('../utils/cache');
 
 async function start() {
   const branchName = await getBranchName();
@@ -13,7 +13,7 @@ async function start() {
     {
       type: 'text',
       name: 'featureName',
-      message: `What is the name of the feature you're working on?`,
+      message: `What is the name of the PR Stack?`,
       initial: branchName
         .split('-')
         .map((name) => `${name[0].toUpperCase()}${name.substr(1)}`)
@@ -22,16 +22,16 @@ async function start() {
     {
       type: 'text',
       name: 'title',
-      message: `What would you like to appear in the title?`,
+      message: `What would you like to appear in the title of the main PR?`,
       initial: 'Add the ability to do something',
     },
   ]);
-  console.log(`Creating a feature stack for ${featureName}`);
-  setFeatureForBranch(branchName, featureName);
-  await initialCommit();
+  console.log(`Creating a PR Stack for ${featureName}...`);
+  // setFeatureForBranch(branchName, featureName);
+  await initialCommit(`Initial commit for ${featureName}`);
   await pushOrigin(branchName);
   const prLink = await openPR(featureName, title);
-  console.log(`Created Stack PR: ${prLink}`);
+  console.log(`Created PR Stack: ${prLink}`);
   console.log(`Run \`npx stacker --next\` to create a Stack Item`);
 }
 

@@ -1,7 +1,7 @@
 const { createCache } = require('./cache');
 
 function setup() {
-  createCache();
+  // createCache();
 }
 
 module.exports = { setup };

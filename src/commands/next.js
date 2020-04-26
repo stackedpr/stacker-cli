@@ -5,13 +5,14 @@ const {
   openPR,
   initialCommit,
   createBranchBasedOn,
+  getFeatureByBranch,
 } = require('../utils/git');
-const { getFeatureByBranch, setFeatureForBranch } = require('../utils/cache');
+// const { setFeatureForBranch } = require('../utils/cache');
 const { log } = require('../utils/logger');
 
 async function next() {
   const baseBranchName = await getBranchName();
-  const featureName = getFeatureByBranch(baseBranchName);
+  const featureName = await getFeatureByBranch(baseBranchName);
   log('got featureName', featureName);
   const { subFeatureTitle } = await prompts([
     {
@@ -21,12 +22,14 @@ async function next() {
       initial: 'Stack Item Title',
     },
   ]);
-  console.log(`Creating Feature Stack Item...`);
+  console.log(`Creating Stack Item...`);
 
   const { number } = await createBranchBasedOn(baseBranchName);
   const branchName = await getBranchName();
-  setFeatureForBranch(branchName, featureName);
-  await initialCommit();
+  // setFeatureForBranch(branchName, featureName);
+  await initialCommit(
+    `Initial commit for [${featureName}] - ${subFeatureTitle}`
+  );
   await pushOrigin(branchName);
   const prLink = await openPR(
     featureName,
@@ -34,7 +37,7 @@ async function next() {
     number,
     baseBranchName
   );
-  console.log(`Created PR: ${prLink}`);
+  console.log(`Created Stack Item: ${prLink}`);
 }
 
 module.exports = { next };

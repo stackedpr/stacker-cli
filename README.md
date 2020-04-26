@@ -1,6 +1,5 @@
 - stacker list: lists main and items
 - running next without start - give a hint and option to run start
 - replace start/next with "new" with meaning inference
-- "new" will always create a new branch based on the latest branch, not current
-- remove _need_ for cache
+- "new" will always create a new branch based on the branch at the top of the stack
 - sync - merges up all branches?
