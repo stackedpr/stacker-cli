@@ -13,5 +13,4 @@ SHA=`shasum -a 256 stacker-v$VERSION.tar.gz`
 now
 rm stacker-v$VERSION.tar.gz
 echo "Replace Values in Formula:"
-echo " Sha $SHA"
-echo " Filename stacker-v$VERSION.tar.gz"
+echo "$SHA"
