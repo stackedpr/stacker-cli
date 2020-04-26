@@ -10,7 +10,7 @@ const {
 // const { setFeatureForBranch } = require('../utils/cache');
 const { log } = require('../utils/logger');
 
-async function next() {
+async function add() {
   const baseBranchName = await getBranchName();
   const featureName = await getFeatureByBranch(baseBranchName);
   log('got featureName', featureName);
@@ -40,4 +40,4 @@ async function next() {
   console.log(`Created Stack Item: ${prLink}`);
 }
 
-module.exports = { next };
+module.exports = { add };

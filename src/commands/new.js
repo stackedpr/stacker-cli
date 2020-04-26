@@ -7,7 +7,7 @@ const {
 } = require('../utils/git');
 // const { setFeatureForBranch } = require('../utils/cache');
 
-async function start() {
+async function newStack() {
   const branchName = await getBranchName();
   const { featureName, title } = await prompts([
     {
@@ -32,7 +32,7 @@ async function start() {
   await pushOrigin(branchName);
   const prLink = await openPR(featureName, title);
   console.log(`Created PR Stack: ${prLink}`);
-  console.log(`Run \`npx stacker --next\` to create a Stack Item`);
+  console.log(`Run \`stacker --add\` to create a Stack Item`);
 }
 
-module.exports = { start };
+module.exports = { newStack };
