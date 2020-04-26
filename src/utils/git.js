@@ -11,7 +11,7 @@ async function getBranchName() {
 async function getFeatureByBranch(branch) {
   const regex = /\#\d+\s+\[(.*?)(?: - Part_\d+)?\].*/;
   log(`getting feature by branch name`);
-  const { stdout } = await run(`hub pr list -b ${branch}`);
+  const { stdout } = await run(`hub pr list -h ${branch}`);
   log(`output:${stdout}`);
   const match = stdout.match(regex);
   if (match) {
