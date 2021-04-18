@@ -1,6 +1,20 @@
 const { run } = require('./cmd');
 const { log } = require('./logger');
 
+async function getRepoName() {
+  const regex = /(\w+).git\s+/;
+  log(`getting repo name`);
+  const { stdout } = await run('git remote -v');
+  log(`output:${stdout}`);
+  const match = stdout.match(regex);
+  if (match) {
+    log(`repo name is: ${match[1]}`);
+    return match[1];
+  }
+  log(`couldnt find feature name by branch`);
+  return '';
+}
+
 async function getBranchName() {
   log(`getting branch name`);
   const { stdout } = await run('git rev-parse --abbrev-ref HEAD');
@@ -99,6 +113,7 @@ async function openPR(featureName, title, part, base) {
 }
 
 module.exports = {
+  getRepoName,
   getBranchName,
   pushOrigin,
   openPR,
