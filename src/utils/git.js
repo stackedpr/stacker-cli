@@ -12,7 +12,7 @@ async function getRepoName() {
     return match[1];
   }
   log(`couldnt find feature name by branch`);
-  return '';
+  return;
 }
 
 async function getBranchName() {

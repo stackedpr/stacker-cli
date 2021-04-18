@@ -5,7 +5,7 @@ const { getRepoName } = require('./utils/git');
 
 const tmpDir = os.tmpdir();
 const repoName = getRepoName();
-const tmpPath = path.join(tmpDir, repoName);
+const tmpPath = path.join(tmpDir, repoName || 'no-name');
 const cacheDir = path.join(tmpPath, '.stacker');
 const cacheFile = path.join(cacheDir, 'cache.json');
 
