@@ -1,10 +1,10 @@
-const { run } = require('./cmd');
+const { run, runSync } = require('./cmd');
 const { log } = require('./logger');
 
-async function getRepoName() {
+function getRepoName() {
   const regex = /(\w+).git\s+/;
   log(`getting repo name`);
-  const { stdout } = await run('git remote -v');
+  const { stdout } = runSync('git remote -v');
   log(`output:${stdout}`);
   const match = stdout.match(regex);
   if (match) {

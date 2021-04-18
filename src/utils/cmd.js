@@ -7,6 +7,13 @@ function run(cmd) {
   return execa(cmdToRun[0], params);
 }
 
+function runSync(cmd) {
+  const cmdToRun = cmd.split(' ');
+  const params = buildParams(cmdToRun.slice(1));
+
+  return execa.sync(cmdToRun[0], params);
+}
+
 function buildParams(cmd) {
   const params = [];
   let shouldConcat = false;
@@ -26,4 +33,4 @@ function buildParams(cmd) {
   return params;
 }
 
-module.exports = { run };
+module.exports = { run, runSync };
