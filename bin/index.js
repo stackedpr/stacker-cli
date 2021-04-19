@@ -11,7 +11,7 @@ try {
     '--new': Boolean,
     '--add': Boolean,
     '--go': String,
-    '--list': Boolean,
+    // '--list': Boolean,
   });
 
   setup();
