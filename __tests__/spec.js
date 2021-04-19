@@ -54,7 +54,7 @@ it('add', async () => {
 		await runPromptWithAnswers('--new', [runTest.ENTER, runTest.ENTER], dummyProjectPath);
 		const { stdout } = await runPromptWithAnswers('--add', [runTest.ENTER], dummyProjectPath);
 
-		expect(stdout).toMatch(`Creating Stack2 Item...`);
+		expect(stdout).toMatch(`Creating Stack Item...`);
 		expect(stdout).toMatch(`Created Stack Item: https://github.com/yairhaimo/dummyProject/pull/`);
 	} finally {
 		checkoutMaster();
