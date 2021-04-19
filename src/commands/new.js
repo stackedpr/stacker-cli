@@ -30,7 +30,7 @@ async function newStack() {
   // setFeatureForBranch(branchName, featureName);
   await initialCommit(`Initial commit for ${featureName}`);
   await pushOrigin(branchName);
-  const prLink = await openPR(featureName, title);
+  const prLink = await openPR({featureName, title, branch: branchName});
   console.log(`Created PR Stack: ${prLink}`);
   console.log(`Run \`stacker --add\` to create a Stack Item`);
 }

@@ -25,7 +25,7 @@ async function getBranchName(cwd) {
 async function getFeatureByBranch(branch, cwd) {
 	const regex = /\#\d+\s+\[(.*?)(?: - Part_\d+)?\].*/;
 	log(`getting feature by branch name`);
-	const { stdout } = await run(`hub pr list -h ${branch}`, cwd);
+	const { stdout } = await run(`gh pr list --search "head:${branch}"`, cwd);
 	log(`output:${stdout}`);
 	const match = stdout.match(regex);
 	if (match) {
@@ -98,12 +98,12 @@ async function checkoutPart(branch, part, cwd) {
 	}
 }
 
-async function openPR(featureName, title, part, base, cwd) {
+async function openPR({ featureName, title, part, base, cwd, branch }) {
 	log(`opening PR`);
 	const prTitle = `[${featureName.toUpperCase()}${part ? ` - Part_${part}` : ''}] - ${title}`;
-	let command = `hub pull-request -m "${prTitle}"`;
+	let command = `gh pr create -t "${prTitle}" -b @EMPTY@ -H ${branch}`;
 	if (base) {
-		command += ` -b ${base}`;
+		command += ` -B ${base}`;
 	}
 	const { stdout } = await run(command, cwd);
 	log(`output:${stdout}`);
@@ -114,6 +114,19 @@ async function createBranch(branch, cwd) {
 	log(`creating branch ${branch}`);
 	const { stdout } = await run(`git checkout -b ${branch}`, cwd);
 	log(`output:${stdout}`);
+}
+
+async function isLoggedIn(cwd) {
+	const regex = /You are not logged into any GitHub hosts. Run gh auth login to authenticate./;
+	log('checking auth status');
+	try {
+		const { stdout } = await run(`gh auth status`, cwd);
+		const result = !regex.test(stdout);
+		log(`logged in? ${result}`);
+		return result;
+	} catch (e) {
+		return false;
+	}
 }
 
 module.exports = {
@@ -127,4 +140,5 @@ module.exports = {
 	checkBranchExistence,
 	getFeatureByBranch,
 	createBranch,
+	isLoggedIn,
 };

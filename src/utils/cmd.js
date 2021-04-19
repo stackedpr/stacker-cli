@@ -29,7 +29,7 @@ function buildParams(cmd) {
 			shouldConcat = false;
 		}
 	}
-	return params;
+	return params.map(param => param.replace(/@EMPTY@/g, ' '));
 }
 
 module.exports = { run, runSync };

@@ -31,11 +31,13 @@ async function add() {
     `Initial commit for [${featureName}] - ${subFeatureTitle}`
   );
   await pushOrigin(branchName);
-  const prLink = await openPR(
+  const prLink = await openPR({
     featureName,
     subFeatureTitle,
     number,
-    baseBranchName
+    baseBranchName,
+    branch: branchName
+  }
   );
   console.log(`Created Stack Item: ${prLink}`);
 }

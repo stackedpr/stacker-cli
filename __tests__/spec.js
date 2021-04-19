@@ -32,8 +32,15 @@ function checkoutMaster() {
 	runSync('git checkout master', dummyProjectPath);
 }
 
-it('new', async () => {
-	try {
+describe('cli', () => {
+	beforeEach(() => {
+		checkoutMaster();
+	});
+	afterAll(() => {
+		checkoutMaster();
+	});
+
+	it('new', async () => {
 		const baseBranch = generateRandomBranchName();
 		createBranch(baseBranch, dummyProjectPath);
 		const { stdout } = await runPromptWithAnswers('--new', [runTest.ENTER, runTest.ENTER], dummyProjectPath);
@@ -42,13 +49,9 @@ it('new', async () => {
 		expect(stdout).toMatch(creatingRegex);
 		expect(stdout).toMatch(`Created PR Stack: https://github.com/yairhaimo/dummyProject/pull/`);
 		expect(stdout).toMatch(`Run \`stacker --add\` to create a Stack Item`);
-	} finally {
-		checkoutMaster();
-	}
-});
+	});
 
-it('add', async () => {
-	try {
+	it('add', async () => {
 		const baseBranch = generateRandomBranchName();
 		createBranch(baseBranch, dummyProjectPath);
 		await runPromptWithAnswers('--new', [runTest.ENTER, runTest.ENTER], dummyProjectPath);
@@ -56,7 +59,5 @@ it('add', async () => {
 
 		expect(stdout).toMatch(`Creating Stack Item...`);
 		expect(stdout).toMatch(`Created Stack Item: https://github.com/yairhaimo/dummyProject/pull/`);
-	} finally {
-		checkoutMaster();
-	}
+	});
 });
