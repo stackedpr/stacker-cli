@@ -3,7 +3,7 @@ set -eo pipefail
 
 npm version patch
 VERSION=`cat package.json | jq -r .version`
-npm run build
+npm run build || { echo "Build Failed!" && exit; }
 cp builds/stacker-macos ../homebrew-stacker/stacker
 rm -rf builds
 cd ../homebrew-stacker
