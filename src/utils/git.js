@@ -23,11 +23,19 @@ async function getBranchName(cwd) {
 }
 
 async function getFeatureByBranch(branch, cwd) {
-	const regex = /\#\d+\s+\[(.*?)(?: - Part_\d+)?\].*/;
+	const regex = /\[(.*?)(?: - Part_\d+)?\]/;
 	log(`getting feature by branch name`);
-	const { stdout } = await run(`gh pr list --search "head:${branch}"`, cwd);
+	log(`regex: ${regex.toString()}`);
+	const { stdout } = await run(`gh pr list --json title,headRefName --search head:${branch}`, cwd);
 	log(`output:${stdout}`);
-	const match = stdout.match(regex);
+	const pr = JSON.parse(stdout).find((pr) => pr.headRefName === branch);
+	if (!pr) {
+		log(`no pr found`);
+		return '';
+	}
+	const title = pr.title;
+	const match = title.match(regex);
+	log(match);
 	if (match) {
 		log(`feature name is: ${match[1]}`);
 		return match[1];
@@ -62,7 +70,7 @@ async function createBranchBasedOn(base, cwd) {
 
 async function initialCommit(msg, cwd) {
 	log(`creating initial commit`);
-	const { stdout } = await run(`git commit --allow-empty -m "${msg}"`, cwd);
+	const { stdout } = await run(`git commit --allow-empty -m ${escapeSpace(msg)}`, cwd);
 	log(`output:${stdout}`);
 	return stdout;
 }
@@ -101,7 +109,7 @@ async function checkoutPart(branch, part, cwd) {
 async function openPR({ featureName, title, part, base, cwd, branch }) {
 	log(`opening PR`);
 	const prTitle = `[${featureName.toUpperCase()}${part ? ` - Part_${part}` : ''}] - ${title}`;
-	let command = `gh pr create -t "${prTitle}" -b @EMPTY@ -H ${branch}`;
+	let command = `gh pr create -t ${escapeSpace(prTitle)} -b ${escapeSpace(title)} -H ${branch}`;
 	if (base) {
 		command += ` -B ${base}`;
 	}
@@ -127,6 +135,10 @@ async function isLoggedIn(cwd) {
 	} catch (e) {
 		return false;
 	}
+}
+
+function escapeSpace(str = '') {
+   return str.replace(/\s/g, '\\ ');
 }
 
 module.exports = {

@@ -33,9 +33,9 @@ async function add() {
   await pushOrigin(branchName);
   const prLink = await openPR({
     featureName,
-    subFeatureTitle,
-    number,
-    baseBranchName,
+    title: subFeatureTitle,
+    part: number,
+    base: baseBranchName,
     branch: branchName
   }
   );
