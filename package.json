@@ -1,7 +1,7 @@
 {
-	"name": "stacker",
+	"name": "stackedprs-cli",
 	"version": "0.0.15",
-	"main": "index.js",
+	"main": "./bin/index.js",
 	"license": "MIT",
 	"bin": {
 		"stacker": "./bin/index.js"
