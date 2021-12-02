@@ -138,7 +138,12 @@ async function isLoggedIn(cwd) {
 }
 
 function escapeSpace(str = '') {
-   return str.replace(/\s/g, '\\ ');
+	return str.replace(/\s/g, '\\ ');
+}
+
+async function getDefaultBranch(cwd) {
+	const { stdout } = await run('gh api repos/{owner}/{repo} --jq .default_branch', cwd);
+	return stdout;
 }
 
 module.exports = {
@@ -153,4 +158,5 @@ module.exports = {
 	getFeatureByBranch,
 	createBranch,
 	isLoggedIn,
+	getDefaultBranch,
 };
