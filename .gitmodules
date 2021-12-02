@@ -1,0 +1,3 @@
+[submodule "__tests__/dummyProject"]
+	path = __tests__/dummyProject
+	url = git@github.com:stackedpr/dummyProject.git

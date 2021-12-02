@@ -28,26 +28,30 @@ function generateRandomBranchName() {
 	return result.join('');
 }
 
-function checkoutMaster() {
-	runSync('git checkout master', dummyProjectPath);
+function checkoutMain() {
+	runSync('git checkout main', dummyProjectPath);
 }
 
 describe('cli', () => {
 	beforeEach(() => {
-		checkoutMaster();
+		checkoutMain();
 	});
 	afterAll(() => {
-		checkoutMaster();
+		checkoutMain();
 	});
 
 	it('new', async () => {
 		const baseBranch = generateRandomBranchName();
 		createBranch(baseBranch, dummyProjectPath);
-		const { stdout } = await runPromptWithAnswers('--new', [runTest.ENTER, runTest.ENTER], dummyProjectPath);
+		const { stdout } = await runPromptWithAnswers(
+			'--new',
+			[runTest.ENTER, runTest.ENTER],
+			dummyProjectPath
+		);
 
 		const creatingRegex = new RegExp(`Creating a PR Stack for ${baseBranch}`, 'i');
 		expect(stdout).toMatch(creatingRegex);
-		expect(stdout).toMatch(`Created PR Stack: https://github.com/yairhaimo/dummyProject/pull/`);
+		expect(stdout).toMatch(`Created PR Stack: https://github.com/stackedpr/dummyProject/pull/`);
 		expect(stdout).toMatch(`Run \`stacker --add\` to create a Stack Item`);
 	});
 
@@ -58,6 +62,6 @@ describe('cli', () => {
 		const { stdout } = await runPromptWithAnswers('--add', [runTest.ENTER], dummyProjectPath);
 
 		expect(stdout).toMatch(`Creating Stack Item...`);
-		expect(stdout).toMatch(`Created Stack Item: https://github.com/yairhaimo/dummyProject/pull/`);
+		expect(stdout).toMatch(`Created Stack Item: https://github.com/stackedpr/dummyProject/pull/`);
 	});
 });
