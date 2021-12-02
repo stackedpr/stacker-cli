@@ -1,5 +1,6 @@
 const execa = require('execa');
 const path = require('path');
+const fs = require('fs');
 const runTest = require('cli-prompts-test');
 const { createBranch } = require('../src/utils/git');
 const { runSync } = require('../src/utils/cmd');
@@ -33,6 +34,12 @@ function checkoutMain() {
 }
 
 describe('cli', () => {
+	beforeAll(() => {
+		if (!fs.existsSync(dummyProjectPath)) {
+			console.log('Creating dummy project');
+			runSync('git clone git@github.com:stackedpr/dummyProject.git', __dirname);
+		}
+	});
 	beforeEach(() => {
 		checkoutMain();
 	});
