@@ -14,3 +14,5 @@
   Main->a->b
   Squash a in place, squash b onto a, merge a onto main, merge main onto master
 - interface to drag and drop commits between stack items
+- error handling
+  - running new on an already initialized branch

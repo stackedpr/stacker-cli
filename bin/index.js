@@ -5,6 +5,8 @@ const { add } = require('../src/commands/add');
 const { go } = require('../src/commands/go');
 const { setup } = require('../src/utils/setup');
 const { isLoggedIn } = require('../src/utils/git');
+const logger = require('../src/utils/logger');
+
 try {
 	const args = arg({
 		'--usage': Boolean,
@@ -19,14 +21,18 @@ try {
 		setup();
 
 		if ((await isLoggedIn()) === false) {
-			console.log('In order to use Stacker, please login to Github by running "gh auth login"');
+			logger.warning(
+				`In order to use Stacker, please login to Github by running ${logger.Highlight(
+					'gh auth login'
+				)}`
+			);
 			process.exit(0);
 		}
 		if (args['--usage']) {
 			usage();
 		} else if (args['--version']) {
 			const pkg = require('../package.json');
-			console.log(`Stacker v${pkg.version}`);
+			logger.info(`Stacker v${pkg.version}`);
 		} else if (args['--new']) {
 			newStack();
 		} else if (args['--add']) {
@@ -34,16 +40,16 @@ try {
 		} else if (args['--go']) {
 			go(args['--go']);
 		} else if (args['--list']) {
-			console.log('Not implemented');
+			logger.warning('Not implemented');
 		}
 	})();
 } catch (e) {
-	console.log('Unknown command.');
+	logger.warning('Unknown command.');
 	usage();
 }
 
 function usage() {
-	console.log(
+	logger.log(
 		`
   --version
   --new\t\tcreate a new PR Stack

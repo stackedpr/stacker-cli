@@ -1,4 +1,3 @@
-const execa = require('execa');
 const path = require('path');
 const fs = require('fs');
 const runTest = require('cli-prompts-test');

@@ -1,0 +1,7 @@
+{
+	"compilerOptions": {
+		"checkJs": true,
+		"resolveJsonModule": true
+	},
+	"include": ["src/**/*", "bin/**/*", "__tests__/**/*"]
+}

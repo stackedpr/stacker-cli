@@ -6,6 +6,7 @@ const {
 	initialCommit,
 	getDefaultBranch,
 } = require('../utils/git');
+const logger = require('../utils/logger');
 // const { setFeatureForBranch } = require('../utils/cache');
 
 async function newStack() {
@@ -14,7 +15,11 @@ async function newStack() {
 		getBranchName(),
 	]);
 	if (defaultBranchName === currentBranchName) {
-		console.log(`You are on ${defaultBranchName}. Switch to a new branch to create a new Stack.`);
+		logger.warning(
+			`You are on ${logger.Highlight(
+				defaultBranchName
+			)}. Switch to a new branch to create a new Stack.`
+		);
 		process.exit();
 	}
 	const { featureName, title } = await prompts([
@@ -34,13 +39,13 @@ async function newStack() {
 			initial: 'Add the ability to do something',
 		},
 	]);
-	console.log(`Creating a PR Stack for ${featureName}...`);
+	logger.info(`\nCreating a PR Stack for ${logger.Highlight(featureName)}...`);
 	// setFeatureForBranch(branchName, featureName);
 	await initialCommit(`Initial commit for ${featureName}`);
 	await pushOrigin(currentBranchName);
 	const prLink = await openPR({ featureName, title, branch: currentBranchName });
-	console.log(`Created PR Stack: ${prLink}`);
-	console.log(`Run \`stacker --add\` to create a Stack Item`);
+	logger.success(`Created PR Stack: ${logger.Highlight(prLink)}`);
+	logger.log(`Run \`${logger.Highlight('stacker --add')}\` to create a Stack Item`);
 }
 
 module.exports = { newStack };

@@ -1,58 +1,78 @@
 const { run, runSync } = require('./cmd');
-const { log } = require('./logger');
+const logger = require('./logger');
 
-function getRepoName(cwd) {
+/**
+ *
+ * @returns {string | undefined}
+ */
+function getRepoName() {
 	const regex = /(\w+).git\s+/;
-	log(`getting repo name`);
-	const { stdout } = runSync('git remote -v', cwd);
-	log(`output:${stdout}`);
+	logger.debug(`getting repo name`);
+	const { stdout } = runSync('git remote -v');
+	logger.debug(`output:${stdout}`);
 	const match = stdout.match(regex);
 	if (match) {
-		log(`repo name is: ${match[1]}`);
+		logger.debug(`repo name is: ${match[1]}`);
 		return match[1];
 	}
-	log(`couldnt find feature name by branch`);
+	logger.debug(`${logger.XMark} Couldnt find feature name by branch`);
 	return;
 }
 
-async function getBranchName(cwd) {
-	log(`getting branch name`);
-	const { stdout } = await run('git rev-parse --abbrev-ref HEAD', cwd);
-	log(`output:${stdout}`);
+/**
+ *
+ * @returns {Promise<string>}
+ */
+async function getBranchName() {
+	logger.debug(`getting branch name`);
+	const { stdout } = await run('git rev-parse --abbrev-ref HEAD');
+	logger.debug(`output:${stdout}`);
 	return stdout;
 }
 
-async function getFeatureByBranch(branch, cwd) {
+/**
+ *
+ * @param {string} branch
+ * @returns {Promise<string>}
+ */
+async function getFeatureByBranch(branch) {
 	const regex = /\[(.*?)(?: - Part_\d+)?\]/;
-	log(`getting feature by branch name`);
-	log(`regex: ${regex.toString()}`);
-	const { stdout } = await run(`gh pr list --json title,headRefName --search head:${branch}`, cwd);
-	log(`output:${stdout}`);
+	logger.debug(`getting feature by branch name`);
+	logger.debug(`regex: ${regex.toString()}`);
+	const { stdout } = await run(`gh pr list --json title,headRefName --search head:${branch}`);
+	logger.debug(`output:${stdout}`);
 	const pr = JSON.parse(stdout).find((pr) => pr.headRefName === branch);
 	if (!pr) {
-		log(`no pr found`);
+		// warn?
+		logger.debug(`no pr found`);
 		return '';
 	}
 	const title = pr.title;
 	const match = title.match(regex);
-	log(match);
+	logger.debug(match);
 	if (match) {
-		log(`feature name is: ${match[1]}`);
+		logger.debug(`feature name is: ${match[1]}`);
 		return match[1];
 	}
-	log(`couldnt find feature name by branch`);
+	logger.debug(`couldnt find feature name by branch`);
 	return '';
 }
 
+/**
+ *
+ * @param {string} base
+ * @param {string} [cwd]
+ * @returns {Promise<Branch>} branch
+ */
 async function createBranchBasedOn(base, cwd) {
 	const match = base.match(/(.*)\-(\d+)/);
 	let name;
 	let number;
-	log(match);
+	logger.debug(match);
 	if (match) {
 		const [, featureBranch, index] = match;
-		log(`featureBranch`, featureBranch);
-		log(`index`, index);
+		logger.debug(`featureBranch`, featureBranch);
+		logger.debug(`index`, index);
 		const newBranchNumber = parseInt(index, 10) + 1;
 		name = featureBranch;
 		number = newBranchNumber;
@@ -62,36 +82,64 @@ async function createBranchBasedOn(base, cwd) {
 	}
 	const branch = `${name}-${number}`;
 
-	log(`creating branch ${branch}`);
+	logger.debug(`creating branch ${branch}`);
 	const { stdout } = await run(`git checkout -b ${branch} ${base}`, cwd);
-	log(`output:${stdout}`);
+	logger.debug(`output:${stdout}`);
 	return { branch, name, number };
 }
 
+/**
+ *
+ * @param {string} msg
+ * @param {string} [cwd]
+ * @returns {Promise<string>}
+ */
 async function initialCommit(msg, cwd) {
-	log(`creating initial commit`);
+	logger.debug(`creating initial commit`);
 	const { stdout } = await run(`git commit --allow-empty -m ${escapeSpace(msg)}`, cwd);
-	log(`output:${stdout}`);
+	logger.debug(`output:${stdout}`);
 	return stdout;
 }
 
+/**
+ *
+ * @param {string} branchName
+ * @param {string} [cwd]
+ * @returns {Promise<string>}
+ */
 async function pushOrigin(branchName, cwd) {
-	log(`pushing origin upstream`);
+	logger.debug(`pushing origin upstream`);
 	const { stdout } = await run(`git push --set-upstream origin ${branchName}`, cwd);
-	log(`output:${stdout}`);
+	logger.debug(`output:${stdout}`);
 	return stdout;
 }
 
+/**
+ *
+ * @param {string} branch
+ * @param {string} [cwd]
+ * @returns {Promise<boolean>}
+ */
 async function checkBranchExistence(branch, cwd) {
 	try {
-		log(`checking branch existence:${branch}`);
+		logger.debug(`checking branch existence:${branch}`);
 		await run(`git rev-parse --verify --quiet ${branch}`, cwd);
+		logger.debug(`branch exists`);
 		return true;
 	} catch (e) {
+		logger.debug(`branch doesnt exist`);
 		return false;
 	}
 }
 
+/**
+ *
+ * @param {string} branch
+ * @param {string} part
+ * @param {string} [cwd]
+ * @returns {Promise<string>}
+ * @throws {Error}
+ */
 async function checkoutPart(branch, part, cwd) {
 	const match = branch.match(/(.*)\-(\d+)/);
 	const base = match ? match[1] : branch;
@@ -101,48 +149,73 @@ async function checkoutPart(branch, part, cwd) {
 		const { stdout } = await run(`git checkout ${partBranch}`, cwd);
 		return stdout;
 	} else {
-		log(`branch does not exist`);
+		logger.debug(`branch does not exist`);
 		throw new Error('NO_BRANCH');
 	}
 }
 
-async function openPR({ featureName, title, part, base, cwd, branch }) {
-	log(`opening PR`);
+/**
+ *
+ * @param {PR} pr
+ * @returns {Promise<string>}
+ */
+async function openPR({ featureName, title, part, base, branch }) {
+	logger.debug(`opening PR`);
 	const prTitle = `[${featureName.toUpperCase()}${part ? ` - Part_${part}` : ''}] - ${title}`;
 	let command = `gh pr create -t ${escapeSpace(prTitle)} -b ${escapeSpace(title)} -H ${branch}`;
 	if (base) {
 		command += ` -B ${base}`;
 	}
-	const { stdout } = await run(command, cwd);
-	log(`output:${stdout}`);
+	const { stdout } = await run(command);
+	logger.debug(`output:${stdout}`);
 	return stdout;
 }
 
+/**
+ *
+ * @param {string} branch
+ * @param {string} cwd
+ * @returns {Promise<void>}
+ */
 async function createBranch(branch, cwd) {
-	log(`creating branch ${branch}`);
+	logger.debug(`creating branch ${branch}`);
 	const { stdout } = await run(`git checkout -b ${branch}`, cwd);
-	log(`output:${stdout}`);
+	logger.debug(`output:${stdout}`);
 }
 
+/**
+ *
+ * @param {string} [cwd]
+ * @returns {Promise<boolean>}
+ */
 async function isLoggedIn(cwd) {
 	const regex = /You are not logged into any GitHub hosts. Run gh auth login to authenticate./;
-	log('checking auth status');
+	logger.debug('checking auth status');
 	try {
 		const { stdout } = await run(`gh auth status`, cwd);
 		const result = !regex.test(stdout);
-		log(`logged in? ${result}`);
+		logger.debug(`logged in? ${result}`);
 		return result;
 	} catch (e) {
 		return false;
 	}
 }
 
+/**
+ *
+ * @param {string} [str='']
+ * @returns {string}
+ */
 function escapeSpace(str = '') {
 	return str.replace(/\s/g, '\\ ');
 }
 
-async function getDefaultBranch(cwd) {
-	const { stdout } = await run('gh api repos/{owner}/{repo} --jq .default_branch', cwd);
+/**
+ *
+ * @returns {Promise<string>}
+ */
+async function getDefaultBranch() {
+	const { stdout } = await run('gh api repos/{owner}/{repo} --jq .default_branch');
 	return stdout;
 }
 
