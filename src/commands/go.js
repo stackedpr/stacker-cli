@@ -10,7 +10,7 @@ async function go(part) {
 		const branchName = await getBranchName();
 		await checkoutPart(branchName, part);
 		const partBranchName = await getBranchName();
-		logger.success(`Switched to: ${logger.Highlight(partBranchName)}`);
+	logger.success(`Switched to: ${logger.Highlight(partBranchName)}`);
 	} catch (e) {
 		if (e.message === 'NO_BRANCH') {
 			if (part === 'main') {

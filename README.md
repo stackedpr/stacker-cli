@@ -16,3 +16,4 @@
 - interface to drag and drop commits between stack items
 - error handling
   - running new on an already initialized branch
+  - gh is not installed (revamp isLoggedIn)

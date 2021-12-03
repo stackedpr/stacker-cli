@@ -51,7 +51,7 @@ describe('cli', () => {
 		createBranch(baseBranch, dummyProjectPath);
 		const { stdout } = await runPromptWithAnswers(
 			'--new',
-			[runTest.ENTER, runTest.ENTER],
+			[runTest.ENTER, runTest.ENTER, runTest.ENTER],
 			dummyProjectPath
 		);
 
@@ -64,7 +64,11 @@ describe('cli', () => {
 	it('add', async () => {
 		const baseBranch = generateRandomBranchName();
 		createBranch(baseBranch, dummyProjectPath);
-		await runPromptWithAnswers('--new', [runTest.ENTER, runTest.ENTER], dummyProjectPath);
+		await runPromptWithAnswers(
+			'--new',
+			[runTest.ENTER, runTest.ENTER, runTest.ENTER],
+			dummyProjectPath
+		);
 		const { stdout } = await runPromptWithAnswers('--add', [runTest.ENTER], dummyProjectPath);
 
 		expect(stdout).toMatch(`Creating Stack Item...`);

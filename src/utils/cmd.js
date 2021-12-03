@@ -1,12 +1,17 @@
 const execa = require('execa');
+const logger = require('./logger');
 
-function run(cmd, cwd = process.cwd()) {
-  const cmdToRun = cmd.replace(/@EMPTY@/g, '""');
-	return execa.command(cmdToRun, { cwd });
+async function run(cmd, cwd = process.cwd()) {
+	const cmdToRun = cmd.replace(/@EMPTY@/g, '""');
+	const { stdout } = await execa.command(cmdToRun, { cwd });
+	logger.debug(`output:${stdout}`);
+	return stdout;
 }
 
 function runSync(cmd, cwd = process.cwd()) {
-	return execa.commandSync(cmd, { cwd });
+	const { stdout } = execa.commandSync(cmd, { cwd });
+	logger.debug(`output:${stdout}`);
+	return stdout;
 }
 
 // function buildParams(cmd) {
