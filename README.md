@@ -17,3 +17,4 @@
 - error handling
   - running new on an already initialized branch
   - gh is not installed (revamp isLoggedIn)
+- idea: phabricatoresque - create a PR for each commit in branch (instead of --new/--add)
