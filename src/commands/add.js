@@ -37,7 +37,8 @@ async function add() {
 		base: baseBranchName,
 		branch: branchName,
 	});
-	logger.success(`Created Stack Item: ${logger.Highlight(prLink)}\n`);
+	logger.success(`Created Stack Item: ${logger.Highlight(prLink)}`);
+	logger.info(`You are now on branch ${logger.Highlight(branchName)}\n`);
 }
 
 module.exports = { add };

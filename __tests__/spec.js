@@ -46,7 +46,7 @@ async function createNewStack(env) {
 async function addStackItem(env) {
 	const { stdout } = await runPromptWithAnswers(
 		'--add',
-		[runTest.ENTER, runTest.ENTER],
+		[runTest.ENTER, runTest.ENTER, runTest.ENTER, runTest.ENTER],
 		dummyProjectPath,
 		env
 	);
@@ -124,6 +124,20 @@ describe('cli', () => {
 
 			expect(stdout).toMatch(`Creating Stack Item...`);
 			expect(stdout).toMatch(`Created Stack Item: https://github.com/stackedpr/dummyProject/pull/`);
+			expect(stdout).toMatch(`You are now on branch ${baseBranch}-1`);
+		});
+
+		it('Create multiple Stack Items', async () => {
+			const baseBranch = generateRandomBranchName();
+			createBranch(baseBranch, dummyProjectPath);
+			await createNewStack();
+			await addStackItem();
+			await addStackItem();
+			const stdout = await addStackItem();
+
+			expect(stdout).toMatch(`Creating Stack Item...`);
+			expect(stdout).toMatch(`Created Stack Item: https://github.com/stackedpr/dummyProject/pull/`);
+			expect(stdout).toMatch(`You are now on branch ${baseBranch}-3`);
 		});
 	});
 });
