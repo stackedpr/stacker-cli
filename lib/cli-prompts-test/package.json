@@ -1,0 +1,39 @@
+{
+  "name": "cli-prompts-test",
+  "version": "0.3.0",
+  "description": "Write e2e tests for CLI apps with ease",
+  "main": "index.js",
+  "scripts": {
+    "format:check": "prettier --check index.js test",
+    "format": "prettier --write index.js test",
+    "pretest": "npm run format:check",
+    "test": "jest"
+  },
+  "files": [
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamesgeorge007/cli-prompts-test.git"
+  },
+  "keywords": [
+    "inquirer",
+    "enquirer",
+    "test",
+    "child_process",
+    "execa",
+    "cli",
+    "prompts"
+  ],
+  "author": "James George",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "concat-stream": "^2.0.0",
+    "execa": "^4.0.3"
+  },
+  "devDependencies": {
+    "enquirer": "^2.3.6",
+    "jest": "^26.4.1",
+    "prettier": "^2.0.5"
+  }
+}

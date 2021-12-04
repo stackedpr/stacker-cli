@@ -3,12 +3,14 @@ const logger = require('./logger');
 
 async function run(cmd, cwd = process.cwd()) {
 	const cmdToRun = cmd.replace(/@EMPTY@/g, '""');
+	logger.debug(`running command:${cmdToRun}`);
 	const { stdout } = await execa.command(cmdToRun, { cwd });
 	logger.debug(`output:${stdout}`);
 	return stdout;
 }
 
 function runSync(cmd, cwd = process.cwd()) {
+	logger.debug(`running command:${cmd}`);
 	const { stdout } = execa.commandSync(cmd, { cwd });
 	logger.debug(`output:${stdout}`);
 	return stdout;

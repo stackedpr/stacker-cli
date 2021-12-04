@@ -1,6 +1,8 @@
 const { run, runSync } = require('./cmd');
 const logger = require('./logger');
 
+const gh = process.env.GH_CLI || 'gh';
+
 /**
  *
  * @returns {string | undefined}
@@ -37,7 +39,7 @@ async function getFeatureByBranch(branch) {
 	const regex = /\[(.*?)(?: - Part_\d+)?\]/;
 	logger.debug(`getting feature by branch name`);
 	logger.debug(`regex: ${regex.toString()}`);
-	const stdout = await run(`gh pr list --json title,headRefName --search head:${branch}`);
+	const stdout = await run(`${gh} pr list --json title,headRefName --search head:${branch}`);
 	logger.debug(`output:${stdout}`);
 	const pr = JSON.parse(stdout).find((pr) => pr.headRefName === branch);
 	if (!pr) {
@@ -149,7 +151,7 @@ async function checkoutPart(branch, part) {
 async function openPR({ featureName, title, part, base, branch }) {
 	logger.debug(`opening PR`);
 	const prTitle = `[${featureName.toUpperCase()}${part ? ` - Part_${part}` : ''}] - ${title}`;
-	let command = `gh pr create -t ${escapeSpace(prTitle)} -b ${escapeSpace(title)} -H ${branch}`;
+	let command = `${gh} pr create -t ${escapeSpace(prTitle)} -b ${escapeSpace(title)} -H ${branch}`;
 	if (base) {
 		command += ` -B ${base}`;
 	}
@@ -171,11 +173,32 @@ async function createBranch(branch, cwd) {
  *
  * @returns {Promise<boolean>}
  */
+async function isGHInstalled() {
+	const regex = /gh version \d+\.\d+\.\d+/;
+	logger.debug('checking if gh is installed');
+	try {
+		const stdout = await run(`${gh} --version`);
+		const result = regex.test(stdout);
+		logger.debug(`gh installed? ${result}`);
+		return result;
+	} catch (e) {
+		return false;
+	}
+}
+
+/**
+ *
+ * @returns {Promise<boolean>}
+ */
 async function isLoggedIn() {
+	// TODO: fake gh client from test and dont rely on this env var
+	if (process.env.GH_CLI_NOT_AUTHED) {
+		return false;
+	}
 	const regex = /You are not logged into any GitHub hosts. Run gh auth login to authenticate./;
 	logger.debug('checking auth status');
 	try {
-		const stdout = await run(`gh auth status`);
+		const stdout = await run(`${gh} auth status`);
 		const result = !regex.test(stdout);
 		logger.debug(`logged in? ${result}`);
 		return result;
@@ -198,7 +221,7 @@ function escapeSpace(str = '') {
  * @returns {Promise<string>}
  */
 async function getDefaultBranch() {
-	return run('gh api repos/{owner}/{repo} --jq .default_branch');
+	return run(`${gh} api repos/{owner}/{repo} --jq .default_branch`);
 }
 
 module.exports = {
@@ -212,6 +235,7 @@ module.exports = {
 	checkBranchExistence,
 	getFeatureByBranch,
 	createBranch,
+	isGHInstalled,
 	isLoggedIn,
 	getDefaultBranch,
 };

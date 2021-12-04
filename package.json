@@ -7,8 +7,9 @@
 		"stacker": "./bin/index.js"
 	},
 	"scripts": {
-		"prebuild": "jest",
-		"build": "pkg --out-path builds --target node14 package.json"
+		"prebuild": "npm run test",
+		"build": "pkg --out-path builds --target node14 package.json",
+		"test": "jest"
 	},
 	"devDependencies": {
 		"@types/jest": "^26.0.22",

@@ -4,7 +4,7 @@ const { newStack } = require('../src/commands/new');
 const { add } = require('../src/commands/add');
 const { go } = require('../src/commands/go');
 const { setup } = require('../src/utils/setup');
-const { isLoggedIn } = require('../src/utils/git');
+const { isLoggedIn, isGHInstalled } = require('../src/utils/git');
 const logger = require('../src/utils/logger');
 
 try {
@@ -19,8 +19,12 @@ try {
 
 	(async () => {
 		setup();
-
-		if ((await isLoggedIn()) === false) {
+		if ((await isGHInstalled()) === false) {
+			logger.warning(
+				`Stacker depends on GitHub's CLI tool. Install it from https://github.com/cli/cli`
+			);
+			process.exit(0);
+		} else if ((await isLoggedIn()) === false) {
 			logger.warning(
 				`In order to use Stacker, please login to Github by running ${logger.Highlight(
 					'gh auth login'
