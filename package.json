@@ -1,6 +1,6 @@
 {
 	"name": "stackedpr-cli",
-	"version": "0.0.17",
+	"version": "0.0.18",
 	"main": "./bin/index.js",
 	"license": "MIT",
 	"bin": {
