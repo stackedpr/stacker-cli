@@ -60,6 +60,19 @@ describe('cli', () => {
 		checkoutMain();
 	});
 
+	describe('Bad GH', () => {
+		it('gh does not exist', async () => {});
+
+		it('gh is not authenticated', async () => {
+			const baseBranch = generateRandomBranchName();
+			createBranch(baseBranch, dummyProjectPath);
+			const stdout = await runNew();
+
+			const creatingRegex = new RegExp(`Creating a PR Stack for ${baseBranch}`, 'i');
+			expect(stdout).toMatch(creatingRegex);
+		});
+	});
+
 	describe('new', () => {
 		it('Create PR Stack', async () => {
 			const baseBranch = generateRandomBranchName();
