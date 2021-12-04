@@ -32,6 +32,20 @@ function checkoutMain() {
 	runSync('git checkout main', dummyProjectPath);
 }
 
+async function runNew() {
+	const { stdout } = await runPromptWithAnswers(
+		'--new',
+		[runTest.ENTER, runTest.ENTER, runTest.ENTER],
+		dummyProjectPath
+	);
+	return stdout;
+}
+
+async function runAdd() {
+	const { stdout } = await runPromptWithAnswers('--add', [runTest.ENTER], dummyProjectPath);
+	return stdout;
+}
+
 describe('cli', () => {
 	beforeAll(() => {
 		if (!fs.existsSync(dummyProjectPath)) {
@@ -46,32 +60,34 @@ describe('cli', () => {
 		checkoutMain();
 	});
 
-	it('new', async () => {
-		const baseBranch = generateRandomBranchName();
-		createBranch(baseBranch, dummyProjectPath);
-		const { stdout } = await runPromptWithAnswers(
-			'--new',
-			[runTest.ENTER, runTest.ENTER, runTest.ENTER],
-			dummyProjectPath
-		);
+	describe('new', () => {
+		it('Create PR Stack', async () => {
+			const baseBranch = generateRandomBranchName();
+			createBranch(baseBranch, dummyProjectPath);
+			const stdout = await runNew();
 
-		const creatingRegex = new RegExp(`Creating a PR Stack for ${baseBranch}`, 'i');
-		expect(stdout).toMatch(creatingRegex);
-		expect(stdout).toMatch(`Created PR Stack: https://github.com/stackedpr/dummyProject/pull/`);
-		expect(stdout).toMatch(`Run \`stacker --add\` to create a Stack Item`);
+			const creatingRegex = new RegExp(`Creating a PR Stack for ${baseBranch}`, 'i');
+			expect(stdout).toMatch(creatingRegex);
+			expect(stdout).toMatch(`Created PR Stack: https://github.com/stackedpr/dummyProject/pull/`);
+			expect(stdout).toMatch(`Run \`stacker --add\` to create a Stack Item`);
+		});
+
+		it('Call `new` on default branch', async () => {
+			const stdout = await runNew();
+
+			expect(stdout).toMatch('You are on main. Switch to a new branch to create a new Stack.');
+		});
 	});
 
-	it('add', async () => {
-		const baseBranch = generateRandomBranchName();
-		createBranch(baseBranch, dummyProjectPath);
-		await runPromptWithAnswers(
-			'--new',
-			[runTest.ENTER, runTest.ENTER, runTest.ENTER],
-			dummyProjectPath
-		);
-		const { stdout } = await runPromptWithAnswers('--add', [runTest.ENTER], dummyProjectPath);
+	describe('add', () => {
+		it('Create Stack Item', async () => {
+			const baseBranch = generateRandomBranchName();
+			createBranch(baseBranch, dummyProjectPath);
+			await runNew();
+			const stdout = await runAdd();
 
-		expect(stdout).toMatch(`Creating Stack Item...`);
-		expect(stdout).toMatch(`Created Stack Item: https://github.com/stackedpr/dummyProject/pull/`);
+			expect(stdout).toMatch(`Creating Stack Item...`);
+			expect(stdout).toMatch(`Created Stack Item: https://github.com/stackedpr/dummyProject/pull/`);
+		});
 	});
 });
