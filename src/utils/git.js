@@ -208,6 +208,22 @@ async function isLoggedIn() {
 }
 
 /**
+ * @description Checks if a PR is already opened for this branch
+ * @returns {Promise<boolean>}
+ */
+async function isPROpened() {
+	logger.debug('checking if PR is opened');
+	try {
+		const stdout = await run(`${gh} pr status --jq .currentBranch --json title`);
+		const result = stdout.trim() !== '';
+		logger.debug(`PR opened? ${result}`);
+		return result;
+	} catch (e) {
+		return false;
+	}
+}
+
+/**
  *
  * @param {string} [str='']
  * @returns {string}
@@ -238,4 +254,5 @@ module.exports = {
 	isGHInstalled,
 	isLoggedIn,
 	getDefaultBranch,
+	isPROpened
 };

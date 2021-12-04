@@ -36,7 +36,7 @@ function checkoutMain() {
 async function createNewStack(env) {
 	const { stdout } = await runPromptWithAnswers(
 		'--new',
-		[runTest.ENTER, runTest.ENTER, runTest.ENTER],
+		[runTest.ENTER, runTest.ENTER, runTest.ENTER, runTest.ENTER],
 		dummyProjectPath,
 		env
 	);
@@ -101,6 +101,17 @@ describe('cli', () => {
 			const stdout = await createNewStack();
 
 			expect(stdout).toMatch('You are on main. Switch to a new branch to create a new Stack.');
+		});
+
+		it('Call `new` on a branch that `new` was called on already', async () => {
+			const baseBranch = generateRandomBranchName();
+			createBranch(baseBranch, dummyProjectPath);
+			await createNewStack();
+			const stdout = await createNewStack();
+
+			expect(stdout).toMatch(
+				'You already created a Stack for this branch.\nCall `stacker --add` to create a Stack Item or run `stacker --new` on a new branch to create a new Stack.'
+			);
 		});
 	});
 

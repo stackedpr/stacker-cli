@@ -5,6 +5,7 @@ const {
 	openPR,
 	initialCommit,
 	getDefaultBranch,
+	isPROpened,
 } = require('../utils/git');
 const logger = require('../utils/logger');
 // const { setFeatureForBranch } = require('../utils/cache');
@@ -19,6 +20,15 @@ async function newStack() {
 			`You are on ${logger.Highlight(
 				defaultBranchName
 			)}. Switch to a new branch to create a new Stack.`
+		);
+		process.exit();
+	}
+	if (await isPROpened()) {
+		logger.warning(
+			`You already created a Stack for this branch.
+Call \`${logger.Highlight('stacker --add')}\` to create a Stack Item or run \`${logger.Highlight(
+				'stacker --new'
+			)}\` on a new branch to create a new Stack.\n`
 		);
 		process.exit();
 	}
