@@ -24,7 +24,7 @@ const isWin = process.platform === 'win32';
  * @returns {Logger}
  */
 function createLogger(name) {
-	const CheckMark = isWin ? '' : chalk.green('√ ');
+	const CheckMark = isWin ? '' : chalk.green('✔ ');
 	const XMark = isWin ? '' : chalk.red('✗ ');
 	const InfoMark = isWin ? '' : chalk.blueBright('🛈 ');
 	const Highlight = (...args) => chalk.underline.italic(...args);

@@ -39,13 +39,14 @@ async function newStack() {
 			initial: 'Add the ability to do something',
 		},
 	]);
-	logger.info(`\nCreating a PR Stack for ${logger.Highlight(featureName)}...`);
+	console.log();
+	logger.info(`Creating a PR Stack for ${logger.Highlight(featureName)}...`);
 	// setFeatureForBranch(branchName, featureName);
 	await initialCommit(`Initial commit for ${featureName}`);
 	await pushOrigin(currentBranchName);
 	const prLink = await openPR({ featureName, title, branch: currentBranchName });
 	logger.success(`Created PR Stack: ${logger.Highlight(prLink)}`);
-	logger.log(`Run \`${logger.Highlight('stacker --add')}\` to create a Stack Item`);
+	logger.log(`Run \`${logger.Highlight('stacker --add')}\` to create a Stack Item\n`);
 }
 
 module.exports = { newStack };

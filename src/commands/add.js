@@ -22,7 +22,8 @@ async function add() {
 			initial: 'Stack Item Title',
 		},
 	]);
-	logger.info(`\nCreating Stack Item...`);
+	console.log();
+	logger.info(`Creating Stack Item...`);
 
 	const { number } = await createBranchBasedOn(baseBranchName);
 	const branchName = await getBranchName();
@@ -36,7 +37,7 @@ async function add() {
 		base: baseBranchName,
 		branch: branchName,
 	});
-	logger.success(`Created Stack Item: ${logger.Highlight(prLink)}`);
+	logger.success(`Created Stack Item: ${logger.Highlight(prLink)}\n`);
 }
 
 module.exports = { add };
