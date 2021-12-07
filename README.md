@@ -18,3 +18,10 @@
   - running new on an already initialized branch
   - gh is not installed (revamp isLoggedIn)
 - idea: phabricatoresque - create a PR for each commit in branch (instead of --new/--add)
+  - gh pr view ID --json commits --jq .
+  - convert current PR into stack or create a new PR if doesnt exist
+    - add convert label, bot will convert
+  - for each commit
+    - create item
+    - cherrypick commit into item
+  - close original pr if exists
